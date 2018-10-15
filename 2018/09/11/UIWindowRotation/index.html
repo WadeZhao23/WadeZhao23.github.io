@@ -137,7 +137,26 @@
         <div class="entry-content has_line_number">
           <p>一些夸张的UI Bug可能都与旋转问题有关</p>
 <a id="more"></a>
-<p>balabalabala</p>
+<p><strong>写在开头：每一名开发者都有一颗成为大牛的心，但是至于你是否能够成功，坚持往下走就对了。</strong></p>
+<h2 id="旋转的基本开关"><a href="#旋转的基本开关" class="headerlink" title="旋转的基本开关"></a>旋转的基本开关</h2><p>你应该知道的基本开关：<br><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fw32ojufaij312w0oijwv.jpg" alt="KeyImage"></p>
+<p>OK，我的建议是如果是iPhone的话，开启portriat、landscape left、landscape right。iPad应用的话四种全开。</p>
+<h2 id="整个应用的旋转思想"><a href="#整个应用的旋转思想" class="headerlink" title="整个应用的旋转思想"></a>整个应用的旋转思想</h2><p><a href="https://www.jianshu.com/p/59732e9240cd" target="_blank" rel="noopener">https://www.jianshu.com/p/59732e9240cd</a><br><br>推荐这个文章用来解决你的APP整体旋转解决方案:基本的思路是在基类中做事情。<br><br>之后继承基类的VC,如果需要定制旋转方向的话，那么你需要重写下面两个属性：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">override var shouldAutorotate: Bool &#123;</span><br><span class="line">	return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">override var supportedInterfaceOrientations: UIInterfaceOrientationMask &#123;</span><br><span class="line">    return .portrait</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Mutible-WIndows-的旋转问题处理"><a href="#Mutible-WIndows-的旋转问题处理" class="headerlink" title="Mutible WIndows 的旋转问题处理"></a>Mutible WIndows 的旋转问题处理</h2><p>这类旋转问题的可能性主要存在于2个及2个以上的WIndow的处理，我这边主要是针对于两个Window所做的处理，如果Window的数目不断增加，我这个方案的适用性确实是值得商榷的。<br><br><strong>下面说一下我这个方案的主要思路 :</strong><br></p>
+<ol>
+<li><p>首先实现AppDelegate里的代理方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -&gt; UIInterfaceOrientationMask</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>主Window必须要有一个TabBarController或者NavigationControllr，同样重写VC的两个属性。<br></p>
+</li>
+<li>此时控制整个APP选择方向的代码放到Appdelegate中进行统一管理</li>
+</ol>
+<h3 id="注意点："><a href="#注意点：" class="headerlink" title="注意点："></a>注意点：</h3><ol>
+<li>如果MainWindow仅支持竖屏，但是AnotherWindow支持横屏模式的话。如果你从AotherWindow横屏的时候返回仅支持竖屏的MainWindow。记得强制旋转屏幕，不然：<img src="https://ws2.sinaimg.cn/large/006tNbRwgy1fw4aguxhavj31ds0n0q3s.jpg" alt="LandscapeImage"><br><br>你的MainWindow也会变得横屏一下。</li>
+<li>还有MainWindow一定要用TabBarController，不然限制不了MainWindow始终保持竖屏。会出现UIStatusBar旋转，但是界面不旋转的Bug。</li>
+<li>还有一点是：控制旋转的主要功能代码是在Appdelegate中根据Window的隐藏去判断旋转方向。</li>
+</ol>
+<h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><p>一个小demo，欢迎大家提出问题改正：<br><a href="https://github.com/WadeZhao23/WindowsRotateDemo" target="_blank" rel="noopener">https://github.com/WadeZhao23/WindowsRotateDemo</a></p>
 
         </div>
       </article>
