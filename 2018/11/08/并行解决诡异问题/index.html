@@ -16,7 +16,7 @@
 
   <!--Open Graph Title-->
   
-      <meta property="og:title" content="Wade Zhao&#39;s Blog"/>
+      <meta property="og:title" content="并行解决诡异问题"/>
   
   <!--Open Graph Description-->
   
@@ -24,7 +24,7 @@
   <meta property="og:site_name" content="Wade Zhao&#39;s Blog"/>
   <!--Type page-->
   
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content="article" />
   
   <!--Page Cover-->
   
@@ -33,7 +33,7 @@
 
   <!-- Title -->
   
-  <title>Archives: 2018/9 - Wade Zhao&#39;s Blog</title>
+  <title>并行解决诡异问题 - Wade Zhao&#39;s Blog</title>
 
 
   <link rel="shortcut icon" href="https://hexo.io/icon/favicon-96x96.png">
@@ -105,47 +105,108 @@
 
 
   <!-- Main Content -->
-  
-
-<!-- Main Content -->
-<div class="archive content-area">
-  <div class="container">
-    <h1 class="entry-title">2018/9</h1>
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <!-- Use lodash to classify posts. See https://lodash.com/docs#groupBy
-          1. group site.posts by year
-          2. sort posts-in-one-year by Month and Day
-        -->
-        
-
-        
-          <h2 class="year">2018</h2>
-          <ul class="list">
+  <div class="content-area">
+  <div class="post">
+    <!-- Post Content -->
+    <div class="container">
+      <article>
+        <!-- Title date & tags -->
+        <div class="post-header">
+          <h1 class="entry-title">
+            并行解决诡异问题
             
-  <li>
-    <span class="date">
-      2018-11-08
-    </span>
-    <a href="/2018/11/08/并行解决诡异问题/" class="title">
-      并行解决诡异问题
-    </a>
-  </li>
+          </h1>
+          <p class="posted-on">
+          2018-11-08
+          </p>
+          <div class="tags-links">
+            
+              
+                <a href="/tags/iOS开发/" rel="tag">
+                  iOS开发
+                </a>
+              
+                <a href="/tags/DispatchQueue/" rel="tag">
+                  DispatchQueue
+                </a>
+              
+            
+          </div>
+        </div>
+        <!-- Post Main Content -->
+        <div class="entry-content has_line_number">
+          <p>一些奇怪的问题你async一下就好了</p>
+<a id="more"></a>
+<p>iOS开发中的一些UI问题可能你把函数放在DispatchQueue.main.async{} 的闭包中去执行就会发现一些意想不到的结果。</p>
+<p><strong>如果这样就解决了你的问题，难道你不想知道到底是为什么嘛?</strong></p>
+<p>我来介绍一下我所发现的本质，介于无法看到这部分的源码，所以我通过一个Demo获得了原因。</p>
+<h2 id="关于Queue与Thread的基础知识"><a href="#关于Queue与Thread的基础知识" class="headerlink" title="关于Queue与Thread的基础知识"></a>关于Queue与Thread的基础知识</h2><ul>
+<li>Queues:1. Main Queue(只有一个你懂的吧) 2. 4个Global Queue 3. 任意数量的自定义Queue</li>
+<li>Threads: 1个主线程和其他任意系统提供的子线程</li>
+</ul>
+<p>DispatchQueue.main.async:</p>
+<ul>
+<li>使用后台子线程执行闭包里的代码，当任务完成时自动更新到UI，整个任务都是在主队列中的</li>
+</ul>
+<p>DispatchQueue.global().async:</p>
+<ul>
+<li>使用后台子线程在全局队列中执行闭包里的代码，当任务完成后代入主队列去更新UI</li>
+</ul>
+<h2 id="解决一些诡异UI问题的原因"><a href="#解决一些诡异UI问题的原因" class="headerlink" title="解决一些诡异UI问题的原因"></a>解决一些诡异UI问题的原因</h2><p>我感觉贴一张图大家就懂了：</p>
+<p><img src="https://ws1.sinaimg.cn/large/006tNbRwgy1fx0oddf9nxj31hc0u0ajs.jpg" alt=""></p>
+<ul>
+<li>你会发现Async闭包里面的内容是放在所有UI生命周期函数之后才会去执行的</li>
+<li>原因呢是这个闭包的实现是放在RunLoop的最后一步</li>
+</ul>
+<h3 id="应用场景："><a href="#应用场景：" class="headerlink" title="应用场景："></a>应用场景：</h3><ul>
+<li>旋转之后的UI刷新，需要等待旋转完全完成，又需要平滑地改变，你可以这么用：</li>
+</ul>
+<p><code>override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        DispatchQueue.main.async {
+            // code snippet
+        }
+}</code></p>
+<ul>
+<li>其他的场景我也有点忘了哈哈，反正RunLoop的底层就行。</li>
+</ul>
+<p><em>一点小经验之谈，大家能取之用之我就很开心了！</em></p>
 
-  <li>
-    <span class="date">
-      2018-09-11
-    </span>
-    <a href="/2018/09/11/UIWindowRotation/" class="title">
-      UIWindowRotation
-    </a>
-  </li>
-
-
-          </ul>
-        
-      </div>
+        </div>
+      </article>
     </div>
+    <!-- Comments -->
+    <div class="container">
+      
+<section id="comment">
+  <!-- <h1 class="title">Comments</h1> -->
+
+  
+  <div id="disqus_thread">
+    <script type="text/javascript">
+    var disqus_config = function () {
+          this.page.url = window.location.href;
+          this.page.identifier = 'post-并行解决诡异问题';
+          this.page.title = '并行解决诡异问题';
+      };
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+    </div>
+    <!-- Pre or Next -->
+    <div class="nav-links">
+      
+      
+        <div class="nav-next">
+          <a href="/2018/09/11/UIWindowRotation/" rel="prev">Newer Posts <span class="meta-arraw meta-arraw-right"></span></a>
+        </div>
+      
+    </div>
+
   </div>
 </div>
 
@@ -216,12 +277,14 @@
   var disqus_shortname = 'your-disqus-shortname';
 
   
+  var disqus_url = 'http://yoursite.com/2018/11/08/并行解决诡异问题/';
+  
 
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
