@@ -16,7 +16,7 @@
 
   <!--Open Graph Title-->
   
-      <meta property="og:title" content="Wade Zhao&#39;s Blog"/>
+      <meta property="og:title" content="多语言索引列表"/>
   
   <!--Open Graph Description-->
   
@@ -24,7 +24,7 @@
   <meta property="og:site_name" content="Wade Zhao&#39;s Blog"/>
   <!--Type page-->
   
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content="article" />
   
   <!--Page Cover-->
   
@@ -33,7 +33,7 @@
 
   <!-- Title -->
   
-  <title>Archives: 2018/11 - Wade Zhao&#39;s Blog</title>
+  <title>多语言索引列表 - Wade Zhao&#39;s Blog</title>
 
 
   <link rel="shortcut icon" href="https://hexo.io/icon/favicon-96x96.png">
@@ -105,71 +105,118 @@
 
 
   <!-- Main Content -->
-  
-
-<!-- Main Content -->
-<div class="archive content-area">
-  <div class="container">
-    <h1 class="entry-title">2018/11</h1>
-    <div class="row">
-      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-        <!-- Use lodash to classify posts. See https://lodash.com/docs#groupBy
-          1. group site.posts by year
-          2. sort posts-in-one-year by Month and Day
-        -->
-        
-
-        
-          <h2 class="year">2019</h2>
-          <ul class="list">
+  <div class="content-area">
+  <div class="post">
+    <!-- Post Content -->
+    <div class="container">
+      <article>
+        <!-- Title date & tags -->
+        <div class="post-header">
+          <h1 class="entry-title">
+            多语言索引列表
             
-  <li>
-    <span class="date">
-      2019-03-14
-    </span>
-    <a href="/2019/03/14/多语言索引列表/" class="title">
-      多语言索引列表
-    </a>
-  </li>
-
-  <li>
-    <span class="date">
-      2019-01-15
-    </span>
-    <a href="/2019/01/15/译文/" class="title">
-      Using errors as control flow in Swift 译文
-    </a>
-  </li>
-
-
-          </ul>
-        
-          <h2 class="year">2018</h2>
-          <ul class="list">
+          </h1>
+          <p class="posted-on">
+          2019-03-14
+          </p>
+          <div class="tags-links">
             
-  <li>
-    <span class="date">
-      2018-11-08
-    </span>
-    <a href="/2018/11/08/并行解决诡异问题/" class="title">
-      并行解决诡异问题
-    </a>
-  </li>
+              
+                <a href="/tags/UILocalizedIndexedCollation, iOS/" rel="tag">
+                  UILocalizedIndexedCollation, iOS
+                </a>
+              
+            
+          </div>
+        </div>
+        <!-- Post Main Content -->
+        <div class="entry-content has_line_number">
+          <h1 id="iOS-多语言索引"><a href="#iOS-多语言索引" class="headerlink" title="iOS 多语言索引"></a>iOS 多语言索引</h1><p>iOS 系统内置了<code>UILocalizedIndexedCollation</code>来实现多语言索引，类似的功能点是：通讯录等。<br></p>
+<hr>
+<p>iOS API提供了几种方法来实现这一功能：<br><br><code>open var sectionTitles: [String] { get }</code></p>
+<blockquote>
+<p>提供了当前语言的全部索引标题</p>
+</blockquote>
+<p><code>open var sectionIndexTitles: [String] { get }</code></p>
+<blockquote>
+<p>提供右边快速索引的标题</p>
+</blockquote>
+<p><code>open func section(forSectionIndexTitle indexTitleIndex: Int) -&gt; Int</code></p>
+<blockquote>
+<p>提供在索引项之间进行映射</p>
+</blockquote>
+<p><code>open func section(for object: Any, collationStringSelector selector: Selector) -&gt; Int</code></p>
+<blockquote>
+<p>找到该元素应该位于哪个section之间</p>
+</blockquote>
+<p><code>open func sortedArray(from array: [Any], collationStringSelector selector: Selector) -&gt; [Any]</code></p>
+<blockquote>
+<p>对已经分好section里面的元素进行排序</p>
+</blockquote>
+<p>下面是我的示例代码：    </p>
+<pre><code>let sectionCount = collation.sectionTitles.countfor _ in 0..&lt;sectionCount {
+    let array: [String] = []
+    sortedData.append(array)
+}
 
-  <li>
-    <span class="date">
-      2018-09-11
-    </span>
-    <a href="/2018/09/11/UIWindowRotation/" class="title">
-      UIWindowRotation
-    </a>
-  </li>
+for index in dataSource {
+    let number = collation.section(for: index, collationStringSelector: #selector(getter: debugDescription))
+    var classifyArray = sortedData[number]
+    classifyArray.append(index)
+    sortedData[number] = classifyArray
+}
 
+for i in 0..&lt;sectionCount {
+    let temp = sortedData[i]
+    let sortedSectionArray = collation.sortedArray(from: temp, collationStringSelector: #selector(getter: debugDescription)) as? [String]
+    if let result = sortedSectionArray {
+        sortedData[i] = result
+        if !result.isEmpty {
+            indexArray.append(collation.sectionTitles[i])
+        }
+    }
+}
 
-          </ul>
-        
-      </div>
+sortedData.removeAll(where: { $0.isEmpty })
+tableView.reloadData() 
+</code></pre><hr>
+<p>这里附一份详细的选择和排序功能的Demo代码<br>地址：<a href="https://github.com/WadeZhao23/SortAndPickerViewController" target="_blank" rel="noopener">Demo</a></p>
+
+        </div>
+      </article>
     </div>
+    <!-- Comments -->
+    <div class="container">
+      
+<section id="comment">
+  <!-- <h1 class="title">Comments</h1> -->
+
+  
+  <div id="disqus_thread">
+    <script type="text/javascript">
+    var disqus_config = function () {
+          this.page.url = window.location.href;
+          this.page.identifier = 'post-多语言索引列表';
+          this.page.title = '多语言索引列表';
+      };
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+    </div>
+    <!-- Pre or Next -->
+    <div class="nav-links">
+      
+      
+        <div class="nav-next">
+          <a href="/2019/01/15/译文/" rel="prev">Newer Posts <span class="meta-arraw meta-arraw-right"></span></a>
+        </div>
+      
+    </div>
+
   </div>
 </div>
 
@@ -240,12 +287,14 @@
   var disqus_shortname = 'WadeZhao';
 
   
+  var disqus_url = 'http://yoursite.com/2019/03/14/多语言索引列表/';
+  
 
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
