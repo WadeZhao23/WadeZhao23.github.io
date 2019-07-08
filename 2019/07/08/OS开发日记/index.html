@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!--Description-->
+  
+
+  <!--Author-->
+  
+  <meta name="author" content="Wade Zhao">
+  
+
+  <!--Open Graph Title-->
+  
+      <meta property="og:title" content="Mac OS开发日记"/>
+  
+  <!--Open Graph Description-->
+  
+  <!--Open Graph Site Name-->
+  <meta property="og:site_name" content="Wade Zhao&#39;s Blog"/>
+  <!--Type page-->
+  
+      <meta property="og:type" content="article" />
+  
+  <!--Page Cover-->
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- Title -->
+  
+  <title>Mac OS开发日记 - Wade Zhao&#39;s Blog</title>
+
+
+  <link rel="shortcut icon" href="https://hexo.io/icon/favicon-96x96.png">
+
+  <!-- Custom CSS/Sass -->
+  <link rel="stylesheet" href="/css/style.css">
+
+  <!----------------------------
+  https://github.com/GallenHu/hexo-theme-Daily
+
+ _____            _   _
+|  __ \          (_) | |
+| |  | |   __ _   _  | |  _   _
+| |  | |  / _` | | | | | | | | |
+| |__| | | (_| | | | | | | |_| |
+|_____/   \__,_| |_| |_|  \__, |
+                          __/ |
+                         |___/
+
+    --------------------------->
+
+</head>
+
+
+<body>
+
+  <!-- Nav -->
+  <header class="site-header">
+  <div class="header-inside">
+    <div class="logo">
+      <a href="/" rel="home">
+        
+        <img src="https://hexo.io/logo.svg" alt="Wade Zhao's Blog" height="60">
+        
+      </a>
+    </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse">
+        <ul class="navbar-nav">
+          
+          
+            <li>
+              <a href="/.">
+                
+                  home
+                
+              </a>
+            </li>
+          
+            <li>
+              <a href="/archives">
+                
+                  archive
+                
+              </a>
+            </li>
+          
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
+    </nav>
+    <div class="button-wrap">
+      <button class="menu-toggle">Primary Menu</button>
+    </div>
+  </div>
+</header>
+
+
+  <!-- Main Content -->
+  <div class="content-area">
+  <div class="post">
+    <!-- Post Content -->
+    <div class="container">
+      <article>
+        <!-- Title date & tags -->
+        <div class="post-header">
+          <h1 class="entry-title">
+            Mac OS开发日记
+            
+          </h1>
+          <p class="posted-on">
+          2019-07-08
+          </p>
+          <div class="tags-links">
+            
+              
+                <a href="/tags/Mac OS/" rel="tag">
+                  Mac OS
+                </a>
+              
+            
+          </div>
+        </div>
+        <!-- Post Main Content -->
+        <div class="entry-content has_line_number">
+          <h1 id="Mac-开发日记（1）"><a href="#Mac-开发日记（1）" class="headerlink" title="Mac 开发日记（1）"></a>Mac 开发日记（1）</h1><blockquote>
+<p>这是一部艰辛且漫长的Mac开发踩坑之旅（适读人群：有经验的iOS开发者）</p>
+</blockquote>
+<h2 id="UI-AutoLayout"><a href="#UI-AutoLayout" class="headerlink" title="UI AutoLayout"></a>UI AutoLayout</h2><p>从UI布局上来说与iOS最大的差别就是坐标系的不同。<br><br>iOS: origin位于左上角（左手坐标系）OSX: origin位于左下角（右手坐标系）</p>
+<p><img src="https://user-images.githubusercontent.com/33977714/58417405-4c5c5200-80b7-11e9-84e8-1dde830b74dd.jpeg" alt="image"></p>
+<p>Note:</p>
+<blockquote>
+<p>所以有的时候的布局你可能需要使用负数。比如一个title的bottomAnchor与view.bottomAnchor, 你需要使用负数才满足UI的布局条件。</p>
+</blockquote>
+<h2 id="NSWindowController-与-NSWindow"><a href="#NSWindowController-与-NSWindow" class="headerlink" title="NSWindowController 与 NSWindow"></a>NSWindowController 与 NSWindow</h2><p>目前我们项目中没有使用NSWindowController，所以没有什么踩坑的点。详细的内容建议大家去看官方文档。<a href="https://developer.apple.com/documentation/appkit/nswindowcontroller" target="_blank" rel="noopener">官方文档</a><br></p>
+<hr>
+<p>下面是几个关于NSWindow的大家可能会碰到的点：</p>
+<ol>
+<li>设置了NSWindow的styleMask这个属性之后会导致点击手势失效，具体原因没有查到，如果哪位大牛知道可以联系我。</li>
+<li>设置windowLevel为.floating之后，可以让你的桌面始终被这个window占有，谨慎使用，小心Quit不了。(Note: Mac 强退快捷键alt+command+esc)</li>
+<li><p>NSWindow和UIWindow类似，需要有一个<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## NSTextField </span><br><span class="line">比较坑的来了，OS X里面没有Label，所以如果你需要一个Label，那么你可能需要进行如下设置：</span><br></pre></td></tr></table></figure></p>
+<p> let label = NSTextField()<br> label.isBordered = false<br> label.isEditable = false</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">经公司小伙伴提醒，你也可以使用构造label的方法来生成一个label，这样你就不需要额外地设置属性：</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>NSTextField(labelWithString: String)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">然后如果你想要垂直居中的话，那就更麻烦了，你需要自己实现一个NSTextFieldCell:</span><br></pre></td></tr></table></figure></p>
+<p>class VerticallyCenteredTextFieldCell: NSTextFieldCell {<br>    override func titleRect(forBounds rect: NSRect) -&gt; NSRect {<br>        var titleRect = super.titleRect(forBounds: rect)</p>
+<pre><code>    let minimumHeight = cellSize(forBounds: rect).height
+    titleRect.origin.y += (titleRect.height - minimumHeight) / 2
+    titleRect.size.height = minimumHeight
+
+    return titleRect
+}
+
+override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView) {
+    super.drawInterior(withFrame: titleRect(forBounds: cellFrame), in: controlView)
+}
+</code></pre><p>}</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">然后你需要把这个cell赋值给NSTextField。</span><br></pre></td></tr></table></figure>
+<pre><code>let label = NSTextField()
+label.cell = VerticallyCenteredTextFieldCell()
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## NSButton </span><br><span class="line">Button 与 label 一样，相对于iOS来说变得更加难用。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">#### 第一点：实现一个拥有按压效果的Button</span><br><span class="line">- 需要实现一个拥有按压效果的NSButtonCell</span><br><span class="line">- 把Cell赋值给Button</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">具有按压效果的NSButtonCell：</span><br></pre></td></tr></table></figure>
+<p>class HighlitedButtonCell: NSButtonCell {<br>    var color: NSColor = NSColor.white<br>    var transparency: CGFloat = 0.4</p>
+<pre><code>override init(imageCell image: NSImage?) {
+    super.init(imageCell: image)
+    backgroundColor = color
+}
+
+required init(coder: NSCoder) {
+    fatalError(&quot;init(coder:) has not been implemented&quot;)
+}
+
+override func highlight(_ flag: Bool, withFrame cellFrame: NSRect, in controlView: NSView) {
+    if flag {
+        backgroundColor = color.withAlphaComponent(transparency)
+    } else {
+        backgroundColor = color
+    }
+}
+</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSButton无法直接实现设置Text和TextColor，提供一些便捷方式：</span><br></pre></td></tr></table></figure></p>
+<p>extension NSButton {<br>    func addTarget(_ target: AnyObject?, action: Selector) {<br>        self.target = target<br>        self.action = action<br>    }</p>
+<pre><code>func setTitle(_ text: String, textColor: NSColor, textFont: NSFont, alignment: NSTextAlignment) {
+    let paragraph = NSMutableParagraphStyle()
+    paragraph.alignment = alignment
+
+    attributedTitle = NSAttributedString(string: text, attributes: [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.paragraphStyle: paragraph])
+}
+</code></pre><p>}<br><code>`</code></p>
+<hr>
+<p>关于Mac的坑还有很多很多，笔者先去调研USB通信这一块了，我们下次再见。</p>
+
+        </div>
+      </article>
+    </div>
+    <!-- Comments -->
+    <div class="container">
+      
+<section id="comment">
+  <!-- <h1 class="title">Comments</h1> -->
+
+  
+  <div id="disqus_thread">
+    <script type="text/javascript">
+    var disqus_config = function () {
+          this.page.url = window.location.href;
+          this.page.identifier = 'post-OS开发日记';
+          this.page.title = 'Mac OS开发日记';
+      };
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+
+    </div>
+    <!-- Pre or Next -->
+    <div class="nav-links">
+      
+      
+        <div class="nav-next">
+          <a href="/2019/03/14/多语言索引列表/" rel="prev">Newer Posts <span class="meta-arraw meta-arraw-right"></span></a>
+        </div>
+      
+    </div>
+
+  </div>
+</div>
+
+
+  <!-- Footer -->
+  <!-- Footer-widgets -->
+<div class="footer-widgets">
+  <div class="row inside-wrapper">
+    <div class="col-1-3">
+      <aside>
+        <h1 class="widget-title">关于本站</h1>
+        <div class="custom-widget-content">
+          
+          <p>These violent delights have violent ends ,and in their triumph die ,like fire and powder ,which,as they kiss ,consume</p>
+        </div>
+      </aside>
+    </div>
+    <div class="col-1-3">
+      <aside>
+        <h1 class="widget-title">Contact</h1>
+        <div class="widget-text">
+          
+            
+              <a href="https://github.com/WadeZhao23" class="icon icon-github" target="_blank">github</a>
+            
+              <a href="https://weibo.com/5300292054/profile?rightmod=1&wvr=6&mod=personinfo" class="icon icon-weibo" target="_blank">weibo</a>
+            
+              <a href="zhaoyuwei23@gmail.com" class="icon icon-mail" target="_blank">mail</a>
+            
+              <a href="https://twitter.com/Tweg24" class="icon icon-twitter" target="_blank">twitter</a>
+            
+          
+        </div>
+      </aside>
+    </div>
+    <div class="col-1-3">
+      <aside>
+        <h1 class="widget-title">Search</h1>
+        <div class="widget-text">
+          <form onSubmit="return appDaily.submitSearch('')">
+            <p>
+              <input type="text" placeholder="search..." id="homeSearchInput">
+            </p>
+            <!-- <input type="submit" value="GO"> -->
+          </form>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+<!-- Footer -->
+<footer class="site-info">
+  <p>
+    <span>Wade Zhao's Blog &copy; 2019</span>
+    
+      <span class="split">|</span>
+      <span>Powered by <a href="https://hexo.io/" target="_blank">Hexo</a> with Theme <a href="https://github.com/GallenHu/hexo-theme-Daily" target="_blank">Daily</a></span>
+    
+  </p>
+</footer>
+
+
+  <!-- After footer scripts -->
+  <!-- scripts -->
+<script src="/js/app.js"></script>
+
+<script>
+  var disqus_shortname = 'WadeZhao';
+
+  
+  var disqus_url = 'http://yoursite.com/2019/07/08/OS开发日记/';
+  
+
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+
+
+
+</body>
+
+</html>
