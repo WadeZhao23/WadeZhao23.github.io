@@ -146,53 +146,26 @@
 <ol>
 <li>设置了NSWindow的styleMask这个属性之后会导致点击手势失效，具体原因没有查到，如果哪位大牛知道可以联系我。</li>
 <li>设置windowLevel为.floating之后，可以让你的桌面始终被这个window占有，谨慎使用，小心Quit不了。(Note: Mac 强退快捷键alt+command+esc)</li>
-<li><p>NSWindow和UIWindow类似，需要有一个<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## NSTextField </span><br><span class="line">比较坑的来了，OS X里面没有Label，所以如果你需要一个Label，那么你可能需要进行如下设置：</span><br></pre></td></tr></table></figure></p>
-<p> let label = NSTextField()<br> label.isBordered = false<br> label.isEditable = false</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">经公司小伙伴提醒，你也可以使用构造label的方法来生成一个label，这样你就不需要额外地设置属性：</span><br></pre></td></tr></table></figure>
-</li>
+<li>NSWindow和UIWindow类似，需要有一个contenViewController和contenView</li>
 </ol>
-<p>NSTextField(labelWithString: String)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">然后如果你想要垂直居中的话，那就更麻烦了，你需要自己实现一个NSTextFieldCell:</span><br></pre></td></tr></table></figure></p>
-<p>class VerticallyCenteredTextFieldCell: NSTextFieldCell {<br>    override func titleRect(forBounds rect: NSRect) -&gt; NSRect {<br>        var titleRect = super.titleRect(forBounds: rect)</p>
-<pre><code>    let minimumHeight = cellSize(forBounds: rect).height
-    titleRect.origin.y += (titleRect.height - minimumHeight) / 2
-    titleRect.size.height = minimumHeight
-
-    return titleRect
-}
-
-override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView) {
-    super.drawInterior(withFrame: titleRect(forBounds: cellFrame), in: controlView)
-}
-</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">然后你需要把这个cell赋值给NSTextField。</span><br></pre></td></tr></table></figure></p>
-<pre><code>let label = NSTextField()
-label.cell = VerticallyCenteredTextFieldCell()
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## NSButton </span><br><span class="line">Button 与 label 一样，相对于iOS来说变得更加难用。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">#### 第一点：实现一个拥有按压效果的Button</span><br><span class="line">- 需要实现一个拥有按压效果的NSButtonCell</span><br><span class="line">- 把Cell赋值给Button</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">具有按压效果的NSButtonCell：</span><br></pre></td></tr></table></figure>
-<p>class HighlitedButtonCell: NSButtonCell {<br>    var color: NSColor = NSColor.white<br>    var transparency: CGFloat = 0.4</p>
-<pre><code>override init(imageCell image: NSImage?) {
-    super.init(imageCell: image)
-    backgroundColor = color
-}
-
-required init(coder: NSCoder) {
-    fatalError(&quot;init(coder:) has not been implemented&quot;)
-}
-
-override func highlight(_ flag: Bool, withFrame cellFrame: NSRect, in controlView: NSView) {
-    if flag {
-        backgroundColor = color.withAlphaComponent(transparency)
-    } else {
-        backgroundColor = color
-    }
-}
-</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">NSButton无法直接实现设置Text和TextColor，提供一些便捷方式：</span><br></pre></td></tr></table></figure></p>
-<p>extension NSButton {<br>    func addTarget(_ target: AnyObject?, action: Selector) {<br>        self.target = target<br>        self.action = action<br>    }</p>
-<pre><code>func setTitle(_ text: String, textColor: NSColor, textFont: NSFont, alignment: NSTextAlignment) {
-    let paragraph = NSMutableParagraphStyle()
-    paragraph.alignment = alignment
-
-    attributedTitle = NSAttributedString(string: text, attributes: [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.paragraphStyle: paragraph])
-}
-</code></pre><p>}<br><code>`</code></p>
+<h2 id="NSTextField"><a href="#NSTextField" class="headerlink" title="NSTextField"></a>NSTextField</h2><p>比较坑的来了，OS X里面没有Label，所以如果你需要一个Label，那么你可能需要进行如下设置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let label = NSTextField()</span><br><span class="line">label.isBordered = false</span><br><span class="line">label.isEditable = false</span><br></pre></td></tr></table></figure></p>
+<p>经公司小伙伴提醒，你也可以使用构造label的方法来生成一个label，这样你就不需要额外地设置属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSTextField(labelWithString: String)</span><br></pre></td></tr></table></figure>
+<hr>
+<p>然后如果你想要垂直居中的话，那就更麻烦了，你需要自己实现一个NSTextFieldCell:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class VerticallyCenteredTextFieldCell: NSTextFieldCell &#123;</span><br><span class="line">    override func titleRect(forBounds rect: NSRect) -&gt; NSRect &#123;</span><br><span class="line">        var titleRect = super.titleRect(forBounds: rect)</span><br><span class="line"></span><br><span class="line">        let minimumHeight = cellSize(forBounds: rect).height</span><br><span class="line">        titleRect.origin.y += (titleRect.height - minimumHeight) / 2</span><br><span class="line">        titleRect.size.height = minimumHeight</span><br><span class="line"></span><br><span class="line">        return titleRect</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView) &#123;</span><br><span class="line">        super.drawInterior(withFrame: titleRect(forBounds: cellFrame), in: controlView)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后你需要把这个cell赋值给NSTextField。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">let label = NSTextField()</span><br><span class="line">label.cell = VerticallyCenteredTextFieldCell()</span><br></pre></td></tr></table></figure>
+<h2 id="NSButton"><a href="#NSButton" class="headerlink" title="NSButton"></a>NSButton</h2><p>Button 与 label 一样，相对于iOS来说变得更加难用。</p>
+<hr>
+<h4 id="第一点：实现一个拥有按压效果的Button"><a href="#第一点：实现一个拥有按压效果的Button" class="headerlink" title="第一点：实现一个拥有按压效果的Button"></a>第一点：实现一个拥有按压效果的Button</h4><ul>
+<li>需要实现一个拥有按压效果的NSButtonCell</li>
+<li>把Cell赋值给Button</li>
+</ul>
+<p>具有按压效果的NSButtonCell：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">class HighlitedButtonCell: NSButtonCell &#123;</span><br><span class="line">    var color: NSColor = NSColor.white</span><br><span class="line">    var transparency: CGFloat = 0.4</span><br><span class="line"></span><br><span class="line">    override init(imageCell image: NSImage?) &#123;</span><br><span class="line">        super.init(imageCell: image)</span><br><span class="line">        backgroundColor = color</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    required init(coder: NSCoder) &#123;</span><br><span class="line">        fatalError(&quot;init(coder:) has not been implemented&quot;)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    override func highlight(_ flag: Bool, withFrame cellFrame: NSRect, in controlView: NSView) &#123;</span><br><span class="line">        if flag &#123;</span><br><span class="line">            backgroundColor = color.withAlphaComponent(transparency)</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            backgroundColor = color</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>NSButton无法直接实现设置Text和TextColor，提供一些便捷方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">extension NSButton &#123;</span><br><span class="line">    func addTarget(_ target: AnyObject?, action: Selector) &#123;</span><br><span class="line">        self.target = target</span><br><span class="line">        self.action = action</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    func setTitle(_ text: String, textColor: NSColor, textFont: NSFont, alignment: NSTextAlignment) &#123;</span><br><span class="line">        let paragraph = NSMutableParagraphStyle()</span><br><span class="line">        paragraph.alignment = alignment</span><br><span class="line"></span><br><span class="line">        attributedTitle = NSAttributedString(string: text, attributes: [NSAttributedString.Key.foregroundColor: textColor, NSAttributedString.Key.font: textFont, NSAttributedString.Key.paragraphStyle: paragraph])</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>
 <p>关于Mac的坑还有很多很多，笔者先去调研USB通信这一块了，我们下次再见。</p>
 
