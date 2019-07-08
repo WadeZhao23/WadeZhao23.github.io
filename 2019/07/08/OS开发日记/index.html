@@ -163,8 +163,7 @@
 override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView) {
     super.drawInterior(withFrame: titleRect(forBounds: cellFrame), in: controlView)
 }
-</code></pre><p>}</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">然后你需要把这个cell赋值给NSTextField。</span><br></pre></td></tr></table></figure>
+</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">然后你需要把这个cell赋值给NSTextField。</span><br></pre></td></tr></table></figure></p>
 <pre><code>let label = NSTextField()
 label.cell = VerticallyCenteredTextFieldCell()
 </code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## NSButton </span><br><span class="line">Button 与 label 一样，相对于iOS来说变得更加难用。</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">#### 第一点：实现一个拥有按压效果的Button</span><br><span class="line">- 需要实现一个拥有按压效果的NSButtonCell</span><br><span class="line">- 把Cell赋值给Button</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">具有按压效果的NSButtonCell：</span><br></pre></td></tr></table></figure>
@@ -185,7 +184,7 @@ override func highlight(_ flag: Bool, withFrame cellFrame: NSRect, in controlVie
         backgroundColor = color
     }
 }
-</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSButton无法直接实现设置Text和TextColor，提供一些便捷方式：</span><br></pre></td></tr></table></figure></p>
+</code></pre><p>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">NSButton无法直接实现设置Text和TextColor，提供一些便捷方式：</span><br></pre></td></tr></table></figure></p>
 <p>extension NSButton {<br>    func addTarget(_ target: AnyObject?, action: Selector) {<br>        self.target = target<br>        self.action = action<br>    }</p>
 <pre><code>func setTitle(_ text: String, textColor: NSColor, textFont: NSFont, alignment: NSTextAlignment) {
     let paragraph = NSMutableParagraphStyle()
